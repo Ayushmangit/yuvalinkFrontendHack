@@ -14,6 +14,44 @@
 
 ## Project Overview
 
+YuvaLinkBackend/
+├── .adonisrc.json          
+├── .env                    
+├── .gitignore
+├── package.json
+├── ace                     
+├── build/              
+├── contracts/              
+│   └── contracts.ts
+├── start/                  
+│   ├── kernel.ts           
+│   ├── routes.ts       
+├── app/                    
+│   ├── Controllers/Http/  
+│   │   └── UserController.ts
+│   ├── Models/             
+│   │   └── User.ts
+│   ├── Middleware/         
+│   │   └── Auth.ts
+│   ├── Services/           
+│   ├── Validators/         
+│   │   └── CreateUserValidator.ts
+│   ├── Exceptions/         
+│   └── Repositories/       
+├── database/               
+│   ├── migrations/         
+│   ├── seeds/              
+│   └── factories/          
+├── resources/              
+│   ├── views/
+│   └── public/
+├── tests/                  
+│   ├── feature/
+│   └── unit/
+├── tsconfig.json           
+└── README.md
+
+
 This backend supports a disaster management system where:
 
 - Admin users create disasters
