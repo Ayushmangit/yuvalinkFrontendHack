@@ -19,6 +19,9 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
+            //perform role based access
+              //add a role field in the authContext and then make a wrapper that will show the dashboards according to the role of the user
+              //Add the admin DashBoard and the volunteerDashboard here
               <Dashboard />
             </ProtectedRoute>
           }
