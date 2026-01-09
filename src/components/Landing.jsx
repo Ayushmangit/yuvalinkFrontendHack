@@ -28,19 +28,23 @@ const Landing = () => {
           </p>
 
           <div className="flex justify-center gap-4">
-            <Link
-              to="/login"
-              className="text-3xl hover:bg-[#1f3357]-700 px-6 py-3 rounded-xl font-bold transition"
-            >
-              Login
-            </Link>
-            {/* <Link
-              to="/dashboard"
-              className="bg-white/10 border border-white/30 px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition"
-            > */}
-              {/* Admin Dashboard */}
-            {/* </Link> */}
-          </div>
+          {/* Login */}
+          <Link
+            to="/login"
+            className="bg-[#1F3347] hover:bg-[#274a6d] px-6 py-3 rounded-xl font-semibold transition"
+          >
+            Login
+          </Link>
+
+          {/* Register */}
+          <Link
+            to="/register"
+            className="bg-white/10 border border-white/30 px-6 py-3 rounded-xl font-semibold
+                      hover:bg-white/20 transition"
+          >
+            Register
+          </Link>
+        </div>
         </div>
       </section>
 
@@ -121,12 +125,23 @@ const Landing = () => {
           matters.
         </p>
 
-        <Link
-          to="/login"
-          className="bg-white text-blue-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition"
-        >
-          Join as Volunteer
-        </Link>
+        <div className="flex justify-center gap-4">
+  <Link
+    to="/register"
+    className="bg-white text-blue-700 px-8 py-3 rounded-xl font-semibold
+               hover:bg-gray-100 transition"
+  >
+    Join as Volunteer
+  </Link>
+
+  <Link
+    to="/login"
+    className="bg-white/20 text-white px-8 py-3 rounded-xl font-semibold
+               hover:bg-white/30 transition"
+  >
+    Login
+  </Link>
+</div>
       </section>
 
       {/* FOOTER */}
