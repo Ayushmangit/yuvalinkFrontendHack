@@ -44,11 +44,6 @@ export default function SideBar({
           >
             <i className="bi bi-newspaper text-2xl"></i>
           </li>
-
-          <li className="cursor-pointer hover:scale-110 transition">
-            <i className="bi bi-file-bar-graph-fill text-2xl"></i>
-          </li>
-
           <li className="cursor-pointer hover:scale-110 transition"
            onClick={onProfileClick}
           >

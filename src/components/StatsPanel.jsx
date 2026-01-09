@@ -1,4 +1,18 @@
+import { useState } from "react";
+import DetailsModal from "../components/DetailsModal";
+import TotalVolunteerTable from "../components/Totalvolunteer";
+import PendingRequestsTable from "./PendingRequest";
+import ActiveIncidentsTable from "./ActiveIncident";
+import AssignedVolunteersTable from "./AssignedVolunteers";
 export default function StatsPanel() {
+  const [openModal, setOpenModal] = useState(false);
+  const [modalType, setModalType] = useState("");
+
+  const openDetails = (type) => {
+    setModalType(type);
+    setOpenModal(true);
+  };
+
   return (
     <div className="space-y-6">
       {/* HEADING */}
@@ -6,47 +20,93 @@ export default function StatsPanel() {
         Incident Stats
       </h3>
 
-      {/* GRID 1 */}
+      {/* GRID */}
       <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-        <div className="bg-black rounded-2xl shadow-md p-7 w-full max-w-sm">
+        {/* TOTAL VOLUNTEERS */}
+        <div className="relative bg-black rounded-2xl shadow-md p-7 pb-12 w-full max-w-sm">
           <p className="text-sm text-blue-600 font-bold">
             Total Volunteers
           </p>
           <p className="text-xl text-blue-500 font-bold mt-2">
             128
           </p>
+          <p
+            onClick={() => openDetails("volunteers")}
+            className="absolute bottom-4 right-5 text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition"
+          >
+            View Details →
+          </p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-md p-7 w-full max-w-sm">
+        {/* PENDING REQUESTS */}
+        <div className="relative bg-black rounded-2xl shadow-md p-7 pb-12 w-full max-w-sm">
           <p className="text-sm text-blue-600 font-bold">
             Pending Requests
           </p>
           <p className="text-xl text-blue-500 font-bold mt-2">
             80
           </p>
+          <p
+           onClick={() => openDetails("requests")}
+          className="absolute bottom-4 right-5 text-xs text-blue-400">
+            View Details →
+          </p>
         </div>
-      </div>
 
-      {/* GRID 2 */}
-      <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-        <div className="bg-black rounded-2xl shadow-md p-7 w-full max-w-sm">
+        {/* ACTIVE INCIDENTS */}
+        <div className="relative bg-black rounded-2xl shadow-md p-7 pb-12 w-full max-w-sm">
           <p className="text-sm text-blue-600 font-bold">
             Active Incidents
           </p>
           <p className="text-xl text-blue-500 font-bold mt-2">
             20
           </p>
+          <p 
+          onClick={() => openDetails("incidents")}
+          className="absolute bottom-4 right-5 text-xs text-blue-400">
+            View Details →
+          </p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-md p-7 w-full max-w-sm">
+        {/* ASSIGNED VOLUNTEERS */}
+        <div className="relative bg-black rounded-2xl shadow-md p-7 pb-12 w-full max-w-sm">
           <p className="text-sm text-blue-600 font-bold">
             Assigned Volunteers
           </p>
           <p className="text-xl text-blue-500 font-bold mt-2">
             40
           </p>
+          <p 
+          onClick={() => openDetails("assigned")}
+          className="absolute bottom-4 right-5 text-xs text-blue-400">
+            View Details →
+          </p>
         </div>
       </div>
+
+      {/* ✅ MODAL RENDER */}
+     {openModal && (
+  <DetailsModal
+    title={
+      modalType === "volunteers"
+        ? "Total Volunteers"
+        : modalType === "requests"
+        ? "Pending Requests"
+        : modalType === "incidents" ?"Active Incidents": 
+        modalType === "assigned" ? "Assigned Volunteers" 
+        : ""
+    }
+    onClose={() => setOpenModal(false)}
+  >
+    {modalType === "volunteers" && <TotalVolunteerTable />}
+    {modalType === "requests" && <PendingRequestsTable />}
+    {modalType === "incidents" && <ActiveIncidentsTable />}
+    {modalType === "assigned" && <AssignedVolunteersTable />}
+
+
+  </DetailsModal>
+)}
+
     </div>
   );
 }
