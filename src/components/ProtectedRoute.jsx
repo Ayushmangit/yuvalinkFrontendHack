@@ -1,11 +1,22 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import AdminDashboard from "../context/AdminDashboard";
+import VolunteerDashboard from "../context/VolunteerDashboard";
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, role,loading } = useAuth();
+  if(!user)
+  {
+    return <Navigate to="/login" replace />;
+  }
+  if(role==="volunteer")
+  {
+    return <AdminDashboard/>
 
-  if (loading) return null; // or spinner
-  return user ? children : <Navigate to="/login" replace />;
+  }
+  if(role === "admin")
+    {
+      return <AdminDashboard/>
+    } 
 };
 
 export default ProtectedRoute;
