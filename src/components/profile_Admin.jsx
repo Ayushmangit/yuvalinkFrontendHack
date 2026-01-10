@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile_Admin({ isOpen, onClose }) {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm
@@ -27,20 +27,20 @@ export default function Profile_Admin({ isOpen, onClose }) {
             A
           </div>
 
-          <h3 className="text-xl font-bold">Admin User</h3>
-          <p className="text-gray-500 text-sm">admin@yuvalink.com</p>
+          <h3 className="text-xl font-bold">{user.fullName}</h3>
+          <p className="text-gray-500 text-sm">{user.email}</p>
 
           <div className="w-full border-t pt-4 space-y-2 text-sm">
-            <p><strong>Role:</strong> Admin</p>
+            <p><strong>Role:</strong> {user.role}</p>
             <p><strong>Location:</strong> India</p>
-            <p><strong>Status:</strong> Active</p>
+            <p><strong>Status:</strong> {user.status}</p>
           </div>
 
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm
                 z-[999] flex items-center justify-center pointer-events-auto">
             <div className="w-[400px] bg-white rounded-2xl p-6 shadow-2xl relative pointer-events-auto">
               <button
-                onClick={() => alert("clicked")}
+                onClick={logout}
                 className="mt-4 px-6 py-2 rounded-full
                  bg-gradient-to-r from-blue-600 to-green-700
                  text-white text-sm"

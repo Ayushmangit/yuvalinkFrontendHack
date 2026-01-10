@@ -8,7 +8,7 @@ export const loginRequest = async (email, password) => {
     body: JSON.stringify({ email, password }),
   });
   const data = await res.json()
-   console.log('LOGIN RESPONSE:', data)
+  console.log('LOGIN RESPONSE:', data)
 
   if (!res.ok) throw new Error("Login failed");
   return data;
