@@ -10,18 +10,19 @@ import AdminDashboard from "./context/AdminDashboard";
 
 function App() {
   return (
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/volunteer" element={<VolunteerDashboard/>}/>
-          <Route path="/admin" element={<AdminDashboard/>}/>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/volunteer" element={<VolunteerDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
 
-          {/* Single dashboard route */}
-          <Route path="/dashboard" element={<ProtectedRoute />} />
-        </Routes>
-      </AuthProvider>
+        {/* Single dashboard route */}
+        <Route path="/dashboard" element={<ProtectedRoute />} />
+      </Routes>
+    </AuthProvider>
+  )
 }
 
 export default App;
