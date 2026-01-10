@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import Sidebar from "../components/SideBar";
-
+import VolunteerSideBar from "../components/VolunteerSideBar";
 
 import ProfileStrip from "../components/ProfileStrip";
 import DashboardCards from "../components/DashboardCards";
@@ -11,6 +10,18 @@ import ActivityHistory from "../components/ActivityHistory";
 
 export default function VolunteerDashboard() {
 
+    const [isVerified] = useState(true);
+
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "/login";
+ };
+ 
+ if (!isVerified) {
+    return <VerificationPending />;
+  }
+  
   const [volunteer, setVolunteer] = useState({
     role: "Volunteer",
     name: "Rajesh Kumar",
@@ -57,6 +68,7 @@ export default function VolunteerDashboard() {
     "/d3.jpg",
     "/d4.jpg",
     "/d5.jpg",
+    "/d6.jpg",
 
   ];
   const[index,setIndex]=useState(0);
@@ -135,16 +147,32 @@ export default function VolunteerDashboard() {
                     activeTasks={dashboardStats.activeTasks}
                     tier={dashboardStats.tier}
                     status={dashboardStats.status} />
-                <TasksSection />
-                <TeamDetails {...teamDetails}/>
-                <ActivityHistory activities={activityHistory}/>
+                <div id="tasks"><TasksSection /></div>
+                <div id="team"><TeamDetails {...teamDetails}/></div>
+                <div id="history"><ActivityHistory activities={activityHistory}/></div>
             </div>
         </div>
         </div>
         
-        <Sidebar 
+        {/* <Sidebar 
             isOpen={sidebarOpen}
             onClose={ () => setSidebarOpen(false)}
+        /> */}
+
+        <VolunteerSideBar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)} onNavigate={(section)=> {
+                setSidebarOpen(false);
+                if (section === "top") {
+                    window.scrollTo({top:0, behavior: "smooth"});
+                } else {
+                    document.getElementById(section)?.scrollIntoView({
+                        behavior: "smooth",
+                    });
+                }
+            }}
+            onLogout={handleLogout}
+
         />
 
         <section className="bg-[#1F3347] py-20 px-[12%] text-center">
