@@ -6,7 +6,7 @@ export default function User({ isOpen, onClose }) {
                     z-[999] flex items-center justify-center">
 
       <div className="w-[400px] bg-white rounded-2xl p-6 shadow-2xl relative">
-        
+
         {/* CLOSE */}
         <button
           onClick={onClose}
@@ -16,8 +16,9 @@ export default function User({ isOpen, onClose }) {
         </button>
 
         {/* PROFILE INFO */}
+
         <div className="flex flex-col items-center gap-4">
-          
+
           {/* AVATAR */}
           <div className="w-24 h-24 rounded-full bg-[#1F3347]
                           flex items-center justify-center

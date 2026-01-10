@@ -1,12 +1,14 @@
-export default function profile_Admin({ isOpen, onClose }) {
-  if (!isOpen) return null;
+import { useAuth } from "../context/AuthContext";
 
+export default function Profile_Admin({ isOpen, onClose }) {
+  const { logout } = useAuth()
+  if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm
                     z-[999] flex items-center justify-center">
 
       <div className="w-[400px] bg-white rounded-2xl p-6 shadow-2xl relative">
-        
+
         {/* CLOSE */}
         <button
           onClick={onClose}
@@ -17,7 +19,7 @@ export default function profile_Admin({ isOpen, onClose }) {
 
         {/* PROFILE INFO */}
         <div className="flex flex-col items-center gap-4">
-          
+
           {/* AVATAR */}
           <div className="w-24 h-24 rounded-full bg-[#1F3347]
                           flex items-center justify-center
@@ -34,13 +36,19 @@ export default function profile_Admin({ isOpen, onClose }) {
             <p><strong>Status:</strong> Active</p>
           </div>
 
-          <button
-            className="mt-4 px-6 py-2 rounded-full
-                       bg-gradient-to-r
-                       from-blue-600 to-green-700
-                       text-white text-sm">
-            Logout
-          </button>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm
+                z-[999] flex items-center justify-center pointer-events-auto">
+            <div className="w-[400px] bg-white rounded-2xl p-6 shadow-2xl relative pointer-events-auto">
+              <button
+                onClick={() => alert("clicked")}
+                className="mt-4 px-6 py-2 rounded-full
+                 bg-gradient-to-r from-blue-600 to-green-700
+                 text-white text-sm"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
 
         </div>
       </div>

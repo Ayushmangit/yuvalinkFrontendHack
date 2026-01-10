@@ -17,19 +17,14 @@ const Login = () => {
 
     try {
       const data = await login(email, password);
-      console.log("LOGIN DATA:", data);
-
-      // ❌ agar token hi nahi aaya
       if (!data || !data.token) {
         setError("Invalid credentials");
         return;
       }
 
-      // ✅ SUCCESS
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // 🔀 Role based redirect
       if (data.user.role === "admin") {
         navigate("/admin");
       } else {
