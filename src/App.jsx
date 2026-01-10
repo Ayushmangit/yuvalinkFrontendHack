@@ -10,7 +10,6 @@ import AdminDashboard from "./context/AdminDashboard";
 
 function App() {
   return (
-     //bhavya
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -23,8 +22,6 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute />} />
         </Routes>
       </AuthProvider>
-   
-  );
 }
 
 export default App;
