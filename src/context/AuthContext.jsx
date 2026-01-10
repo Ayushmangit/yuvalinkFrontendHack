@@ -56,7 +56,14 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  /**
+   * [TODO:description]
+   *
+   * @async
+   * @returns {Promise<[TODO:type]>} [TODO:description]
+   */
   const logout = async () => {
+    console.log("logout called")
     try {
       if (token) {
         await logoutRequest(token);
@@ -72,7 +79,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, register, logout, loading }}
+      value={{ user, token, role: user?.role, login, register, logout, loading }}
     >
       {!loading && children}
     </AuthContext.Provider>

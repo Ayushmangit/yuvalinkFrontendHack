@@ -7,9 +7,11 @@ export const loginRequest = async (email, password) => {
     credentials: "include",
     body: JSON.stringify({ email, password }),
   });
+  const data = await res.json()
+   console.log('LOGIN RESPONSE:', data)
 
   if (!res.ok) throw new Error("Login failed");
-  return res.json();
+  return data;
 };
 
 export const registerRequest = async (fullName, email, password) => {
