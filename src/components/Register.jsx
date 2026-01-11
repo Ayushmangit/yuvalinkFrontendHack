@@ -11,16 +11,15 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [city, setCity] = useState("");
-const [skills, setSkills] = useState("");
+  const [skills, setSkills] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = await register(fullName, email, password,city,skills);
+      const data = await register(fullName, email, password, city, skills);
       localStorage.setItem("token", data.token);
 
-      // ✅ redirect to volunteer dashboard
       navigate("/volunteer");
     } catch (err) {
       setError("Registration failed. Try again.");
@@ -95,39 +94,35 @@ const [skills, setSkills] = useState("");
           />
         </div>
         <div>
-  <label className="block text-sm font-medium text-gray-700">
-    City
-  </label>
-  <input
-    type="text"
-    placeholder="e.g. Delhi"
-    onChange={(e) => setCity(e.target.value)}
-    required
-    className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2
+          <label className="block text-sm font-medium text-gray-700">
+            City
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. Delhi"
+            onChange={(e) => setCity(e.target.value)}
+            required
+            className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2
                focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
-{/* Skills */}
-<div>
-  <label className="block text-sm font-medium text-gray-700">
-    Skills
-  </label>
-  <input
-    type="text"
-    placeholder="e.g. First Aid, Rescue, Logistics"
-    onChange={(e) => setSkills(e.target.value)}
-    required
-    className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2
+          />
+        </div>
+        {/* Skills */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Skills
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. First Aid, Rescue, Logistics"
+            onChange={(e) => setSkills(e.target.value)}
+            required
+            className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2
                focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-  <p className="mt-1 text-xs text-gray-500">
-    Separate multiple skills with commas
-  </p>
-</div>
-
-
-
-        {/* Submit */}
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Separate multiple skills with commas
+          </p>
+        </div>
         <button
           type="submit"
           className="w-full rounded-lg bg-blue-600 py-2.5 font-semibold text-white

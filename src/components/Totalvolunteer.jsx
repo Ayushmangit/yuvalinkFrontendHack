@@ -1,77 +1,48 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function TotalVolunteerTable() {
-  /* ================= STATES ================= */
   const [volunteers, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { token } = useAuth()
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("All");
   const [skill, setSkill] = useState("All");
 
-  /* ================= API / DUMMY DATA ================= */
   useEffect(() => {
-    // 🔹 ABHI DUMMY DATA (backend ready hone pe sirf yaha change hoga)
-    const dummyData = [
-      {
-        id: "V001",
-        name: "Rahul Sharma",
-        email: "rahul@email.com",
-        city: "Mumbai",
-        skills: "Medical Aid",
-        status: "Active",
-        verified: true,
-      },
-      {
-        id: "V002",
-        name: "Priya Patel",
-        email: "priya@email.com",
-        city: "Delhi",
-        skills: "Logistics",
-        status: "Active",
-        verified: false,
-      },
-      {
-        id: "V003",
-        name: "Amit Kumar",
-        email: "amit@email.com",
-        city: "Bangalore",
-        skills: "Rescue Operations",
-        status: "Inactive",
-        verified: false,
-      },
-      {
-        id: "V004",
-        name: "Neha Verma",
-        email: "neha@email.com",
-        city: "Pune",
-        skills: "First Aid",
-        status: "Active",
-        verified: true,
-      },
-    ];
+    if (!token) return;
 
-    // ⏳ fake loading
-    setTimeout(() => {
-      setVolunteers(dummyData);
-      setLoading(false);
-    }, 500);
+    const fetchVolunteers = async () => {
+      try {
+        setLoading(true);
 
-    /* ================= FUTURE BACKEND =================
-    fetch("https://api.yuvalink.com/admin/volunteers")
-      .then(res => res.json())
-      .then(data => {
+        const response = await fetch("http://localhost:3333/auth/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Unauthorized or failed request");
+        }
+        const data = await response.json();
         setVolunteers(data);
+      } catch (error) {
+        console.error("Fetch volunteers error:", error);
+        setVolunteers([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    =================================================== */
-  }, []);
+      }
+    };
 
-  /* ================= FILTER LOGIC ================= */
+    fetchVolunteers();
+  }, [token]);
+
+
   const filteredVolunteers = volunteers.filter((v) => {
     const matchSearch =
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
+      v.fullName.toLowerCase().includes(search.toLowerCase()) ||
       v.email.toLowerCase().includes(search.toLowerCase());
 
     const matchCity = city === "All" || v.city === city;
@@ -164,7 +135,7 @@ export default function TotalVolunteerTable() {
               filteredVolunteers.map((v) => (
                 <tr key={v.id} className="border-b last:border-none">
                   <td className="p-4">{v.id}</td>
-                  <td className="p-4">{v.name}</td>
+                  <td className="p-4">{v.fullName}</td>
                   <td className="p-4">{v.email}</td>
                   <td className="p-4">{v.city}</td>
                   <td className="p-4">{v.skills}</td>
@@ -172,11 +143,10 @@ export default function TotalVolunteerTable() {
                   {/* STATUS */}
                   <td className="p-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        v.status === "Active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-200 text-gray-600"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-sm font-medium flex ${v.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-200 text-gray-600"
+                        }`}
                     >
                       {v.status}
                     </span>

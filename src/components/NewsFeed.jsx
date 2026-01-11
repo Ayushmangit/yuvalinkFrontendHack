@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import DetailsModal from "./DetailsModal";
+import { useAuth } from "../context/AuthContext";
 
 export default function NewsFeed({ onViewAll, onDataLoaded }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { token } = useAuth()
   const [showModal, setShowModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [city, setCity] = useState("");
@@ -27,9 +28,7 @@ export default function NewsFeed({ onViewAll, onDataLoaded }) {
       });
   }, []);
 
-  // ================= ACTIVATE INCIDENT =================
   const handleActivate = async (item) => {
-    const token = localStorage.getItem("token");
 
     if (!token) {
       alert("Not authenticated. Please login again.");
@@ -76,7 +75,6 @@ export default function NewsFeed({ onViewAll, onDataLoaded }) {
     }
   };
 
-  // ================= LOADING =================
   if (loading) {
     return (
       <p className="text-center text-gray-500 py-6">
@@ -85,7 +83,6 @@ export default function NewsFeed({ onViewAll, onDataLoaded }) {
     );
   }
 
-  // ================= JSX =================
   return (
     <div className="w-full">
       {/* HEADER */}

@@ -48,8 +48,8 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const register = async (fullName, email, password,city,skills) => {
-    const data = await registerRequest(fullName, email, password,city,skills);
+  const register = async (fullName, email, password, city, skills) => {
+    const data = await registerRequest(fullName, email, password, city, skills);
     setUser(data.user);
     setToken(data.token);
     return data;
