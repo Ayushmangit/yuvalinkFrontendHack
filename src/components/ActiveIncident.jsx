@@ -1,71 +1,58 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function ActiveIncidentsTable() {
-  /* ================= STATES ================= */
+  const { token } = useAuth();
+
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("All");
 
-  /* ================= API / DUMMY DATA ================= */
   useEffect(() => {
-    // 🔹 ABHI DUMMY DATA
-    const dummyData = [
-      {
-        incidentId: "INC001",
-        incidentName: "Flood in Sector 12",
-        city: "Delhi",
-        assignedVolunteers: 5,
-      },
-      {
-        incidentId: "INC002",
-        incidentName: "Road Accident",
-        city: "Mumbai",
-        assignedVolunteers: 3,
-      },
-      {
-        incidentId: "INC003",
-        incidentName: "Fire Emergency",
-        city: "Pune",
-        assignedVolunteers: 7,
-      },
-      {
-        incidentId: "INC004",
-        incidentName: "Power Failure",
-        city: "Bangalore",
-        assignedVolunteers: 2,
-      },
-    ];
+    if (!token) return;
 
-    setTimeout(() => {
-      setIncidents(dummyData);
-      setLoading(false);
-    }, 500);
+    const fetchIncidents = async () => {
+      try {
+        setLoading(true);
 
-    /* ================= FUTURE BACKEND =================
-    fetch("https://api.yuvalink.com/admin/active-incidents")
-      .then(res => res.json())
-      .then(data => {
+        const response = await fetch("http://localhost:3333/incidents", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Unauthorized or failed request");
+        }
+        const data = await response.json();
         setIncidents(data);
+      } catch (error) {
+        console.error("Fetch incidents error:", error);
+        setIncidents([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    =================================================== */
-  }, []);
+      }
+    };
 
-  /* ================= FILTER LOGIC ================= */
+    fetchIncidents();
+  }, [token]);
+
   const filteredIncidents = incidents.filter((i) => {
-    const matchSearch = i.incidentName
+    const name = i.incidentName || i.title || "";
+    const incidentCity = i.city || "";
+
+    const matchSearch = name
       .toLowerCase()
       .includes(search.toLowerCase());
 
-    const matchCity = city === "All" || i.city === city;
+    const matchCity = city === "All" || incidentCity === city;
 
     return matchSearch && matchCity;
   });
 
-  /* ================= UI ================= */
   if (loading) {
     return (
       <div className="text-center py-10 text-gray-500">
@@ -122,18 +109,15 @@ export default function ActiveIncidentsTable() {
               </tr>
             ) : (
               filteredIncidents.map((i) => (
-                <tr
-                  key={i.incidentId}
-                  className="border-b last:border-none"
-                >
-                  <td className="p-4">{i.incidentId}</td>
-                  <td className="p-4">{i.incidentName}</td>
+                <tr key={i.id} className="border-b last:border-none">
+                  <td className="p-4">{i.id}</td>
+                  <td className="p-4">
+                    {i.name || i.title}
+                  </td>
                   <td className="p-4">{i.city}</td>
-
-                  {/* ASSIGNED COUNT */}
                   <td className="p-4">
                     <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
-                      {i.assignedVolunteers}
+                      {i.assignedVolunteers ?? 0}
                     </span>
                   </td>
                 </tr>
