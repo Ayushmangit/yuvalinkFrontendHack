@@ -34,10 +34,17 @@ function App() {
         <Route path="/volunteer" element={<VolunteerDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
 
+
         {/* Single dashboard route */}
         <Route path="/dashboard" element={<ProtectedRoute />} />
       </Routes>
     </AuthProvider>
+          {/* Single dashboard route */}
+          <Route path="/dashboard" element={<ProtectedRoute />} />
+          
+        </Routes>
+      </AuthProvider>
+
   )
 }
 
