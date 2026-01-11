@@ -39,13 +39,20 @@ export default function VolunteerSideBar ({
                     <i className="bi bi-clock-history text-2xl"></i>
                 </li>
 
-                <li
+                {/* <li
                     onClick={() => {
                         onLogout();
                         onClose();
                     }}
                     className="cursor-pointer hover:scale-110 transition mt-auto"
-                    >
+                    > */}
+                    <li
+                        onClick={() => {
+                            onNavigate("logout");
+                            onClose();
+                        }}
+                        className="cursor-pointer hover:scale-110 transition mt-auto"
+                        >
                     <i className="bi bi-box-arrow-right text-2xl"></i>
                 </li>
 
