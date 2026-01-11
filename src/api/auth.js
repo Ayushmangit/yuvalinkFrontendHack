@@ -7,18 +7,24 @@ export const loginRequest = async (email, password) => {
     credentials: "include",
     body: JSON.stringify({ email, password }),
   });
-  const data = await res.json()
-  console.log('LOGIN RESPONSE:', data)
+  const data = await res.json();
+  console.log("LOGIN RESPONSE:", data);
 
   if (!res.ok) throw new Error("Login failed");
   return data;
 };
 
-export const registerRequest = async (fullName, email, password) => {
+export const registerRequest = async (
+  fullName,
+  email,
+  password,
+  city,
+  skills,
+) => {
   const res = await fetch(`${API_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fullName, email, password }),
+    body: JSON.stringify({ fullName, email, password, city, skills }),
   });
 
   if (!res.ok) throw new Error("Register failed");
