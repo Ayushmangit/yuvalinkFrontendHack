@@ -1,64 +1,52 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function AssignedVolunteersTable() {
-  /* ================= STATES ================= */
+
   const [assigned, setAssigned] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { token } = useAuth()
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("All");
 
-  /* ================= API / DUMMY DATA ================= */
   useEffect(() => {
-    // 🔹 ABHI DUMMY DATA
-    const dummyData = [
-      {
-        id: "V001",
-        name: "Rahul Sharma",
-        email: "rahul@email.com",
-        incident: "Flood in Sector 12",
-        city: "Delhi",
-      },
-      {
-        id: "V002",
-        name: "Priya Patel",
-        email: "priya@email.com",
-        incident: "Road Accident",
-        city: "Mumbai",
-      },
-      {
-        id: "V003",
-        name: "Amit Kumar",
-        email: "amit@email.com",
-        incident: "Fire Emergency",
-        city: "Pune",
-      },
-      {
-        id: "V004",
-        name: "Neha Verma",
-        email: "neha@email.com",
-        incident: "Power Failure",
-        city: "Bangalore",
-      },
-    ];
+    const fetchAssignedVolunteers = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:3333/tasks/assigned-volunteers",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    setTimeout(() => {
-      setAssigned(dummyData);
-      setLoading(false);
-    }, 500);
+        if (!res.ok) {
+          throw new Error("Failed to fetch assigned volunteers");
+        }
 
-    /* ================= FUTURE BACKEND =================
-    fetch("https://api.yuvalink.com/admin/assigned-volunteers")
-      .then(res => res.json())
-      .then(data => {
-        setAssigned(data);
+        const data = await res.json();
+        console.log(data)
+
+
+        const mapped = data.map((item, index) => ({
+          id: `V${String(index + 1).padStart(3, "0")}`, // V001
+          name: item.fullName,
+          email: item.email,
+          incident: item.incident,
+          city: item.city,
+        }));
+
+        setAssigned(mapped);
+      } catch (err) {
+        console.error("Error fetching assigned volunteers", err);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    =================================================== */
-  }, []);
+      }
+    };
 
-  /* ================= FILTER LOGIC ================= */
+    fetchAssignedVolunteers();
+  }, [token]);
   const filteredAssigned = assigned.filter((v) => {
     const matchSearch =
       v.name.toLowerCase().includes(search.toLowerCase()) ||
