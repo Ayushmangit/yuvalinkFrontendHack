@@ -1,53 +1,14 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
-export default function ActiveIncidentsTable() {
-  const { token } = useAuth();
-
-  const [incidents, setIncidents] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+export default function ActiveIncidentsTable({ incidents, loading }) {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("All");
-
-  useEffect(() => {
-    if (!token) return;
-
-    const fetchIncidents = async () => {
-      try {
-        setLoading(true);
-
-        const response = await fetch("http://localhost:3333/incidents", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Unauthorized or failed request");
-        }
-        const data = await response.json();
-        setIncidents(data);
-      } catch (error) {
-        console.error("Fetch incidents error:", error);
-        setIncidents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchIncidents();
-  }, [token]);
 
   const filteredIncidents = incidents.filter((i) => {
     const name = i.incidentName || i.title || "";
     const incidentCity = i.city || "";
 
-    const matchSearch = name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
+    const matchSearch = name.toLowerCase().includes(search.toLowerCase());
     const matchCity = city === "All" || incidentCity === city;
 
     return matchSearch && matchCity;
@@ -63,14 +24,14 @@ export default function ActiveIncidentsTable() {
 
   return (
     <div className="space-y-4">
-      {/* SEARCH + FILTERS */}
+      {/* SEARCH */}
       <div className="flex gap-4">
         <input
           type="text"
           placeholder="Search incidents..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 border rounded-xl px-4 py-2 outline-none"
+          className="flex-1 border rounded-xl px-4 py-2"
         />
 
         <select
@@ -91,12 +52,10 @@ export default function ActiveIncidentsTable() {
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="p-4 text-left text-blue-700">Incident ID</th>
-              <th className="p-4 text-left text-blue-700">Incident Name</th>
-              <th className="p-4 text-left text-blue-700">City</th>
-              <th className="p-4 text-left text-blue-700">
-                Assigned Volunteers
-              </th>
+              <th className="p-4 text-left">ID</th>
+              <th className="p-4 text-left">Incident</th>
+              <th className="p-4 text-left">City</th>
+              <th className="p-4 text-left">Volunteers</th>
             </tr>
           </thead>
 
@@ -109,17 +68,11 @@ export default function ActiveIncidentsTable() {
               </tr>
             ) : (
               filteredIncidents.map((i) => (
-                <tr key={i.id} className="border-b last:border-none">
+                <tr key={i.id} className="border-b">
                   <td className="p-4">{i.id}</td>
-                  <td className="p-4">
-                    {i.name || i.title}
-                  </td>
+                  <td className="p-4">{i.name || i.title}</td>
                   <td className="p-4">{i.city}</td>
-                  <td className="p-4">
-                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
-                      {i.assignedVolunteers ?? 0}
-                    </span>
-                  </td>
+                  <td className="p-4">{i.assignedVolunteers ?? 0}</td>
                 </tr>
               ))
             )}

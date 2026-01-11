@@ -1,44 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
-export default function TotalVolunteerTable() {
-  const [volunteers, setVolunteers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { token } = useAuth()
+export default function TotalVolunteerTable({ volunteers, loading }) {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("All");
   const [skill, setSkill] = useState("All");
-
-  useEffect(() => {
-    if (!token) return;
-
-    const fetchVolunteers = async () => {
-      try {
-        setLoading(true);
-
-        const response = await fetch("http://localhost:3333/auth/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Unauthorized or failed request");
-        }
-        const data = await response.json();
-        setVolunteers(data);
-      } catch (error) {
-        console.error("Fetch volunteers error:", error);
-        setVolunteers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVolunteers();
-  }, [token]);
-
 
   const filteredVolunteers = volunteers.filter((v) => {
     const matchSearch =
@@ -51,19 +16,6 @@ export default function TotalVolunteerTable() {
     return matchSearch && matchCity && matchSkill;
   });
 
-  /* ================= ACTION HANDLER ================= */
-  const handleVerify = (id) => {
-    // backend-ready
-    console.log("Verify volunteer:", id);
-
-    setVolunteers((prev) =>
-      prev.map((v) =>
-        v.id === id ? { ...v, verified: true } : v
-      )
-    );
-  };
-
-  /* ================= UI ================= */
   if (loading) {
     return (
       <div className="text-center py-10 text-gray-500">
@@ -81,7 +33,7 @@ export default function TotalVolunteerTable() {
           placeholder="Search volunteers..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 border rounded-xl px-4 py-2 outline-none"
+          className="flex-1 border rounded-xl px-4 py-2"
         />
 
         <select
@@ -114,59 +66,31 @@ export default function TotalVolunteerTable() {
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="p-4 text-left text-blue-700">ID</th>
-              <th className="p-4 text-left text-blue-700">Name</th>
-              <th className="p-4 text-left text-blue-700">Email</th>
-              <th className="p-4 text-left text-blue-700">City</th>
-              <th className="p-4 text-left text-blue-700">Skills</th>
-              <th className="p-4 text-left text-blue-700">Status</th>
-              <th className="p-4 text-left text-blue-700">Action</th>
+              <th className="p-4 text-left">ID</th>
+              <th className="p-4 text-left">Name</th>
+              <th className="p-4 text-left">Email</th>
+              <th className="p-4 text-left">City</th>
+              <th className="p-4 text-left">Skills</th>
+              <th className="p-4 text-left">Status</th>
             </tr>
           </thead>
 
           <tbody>
             {filteredVolunteers.length === 0 ? (
               <tr>
-                <td colSpan="7" className="p-6 text-center text-gray-500">
+                <td colSpan="6" className="p-6 text-center text-gray-500">
                   No volunteers found
                 </td>
               </tr>
             ) : (
               filteredVolunteers.map((v) => (
-                <tr key={v.id} className="border-b last:border-none">
+                <tr key={v.id} className="border-b">
                   <td className="p-4">{v.id}</td>
                   <td className="p-4">{v.fullName}</td>
                   <td className="p-4">{v.email}</td>
                   <td className="p-4">{v.city}</td>
                   <td className="p-4">{v.skills}</td>
-
-                  {/* STATUS */}
-                  <td className="p-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium flex ${v.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-200 text-gray-600"
-                        }`}
-                    >
-                      {v.status}
-                    </span>
-                  </td>
-
-                  {/* ACTION */}
-                  <td className="p-4">
-                    {v.verified ? (
-                      <span className="px-3 py-1 rounded-lg text-sm bg-blue-100 text-blue-700">
-                        Request Verified
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleVerify(v.id)}
-                        className="px-3 py-1 rounded-lg text-sm bg-red-100 text-red-700 hover:bg-red-200 transition"
-                      >
-                        Request Non-Verified
-                      </button>
-                    )}
-                  </td>
+                  <td className="p-4">{v.status}</td>
                 </tr>
               ))
             )}

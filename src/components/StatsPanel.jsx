@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import DetailsModal from "../components/DetailsModal";
 import TotalVolunteerTable from "../components/Totalvolunteer";
 import PendingRequestsTable from "./PendingRequest";
@@ -7,11 +8,54 @@ import AssignedVolunteersTable from "./AssignedVolunteers";
 export default function StatsPanel() {
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState("");
-
+  const { token } = useAuth();
+const [volunteers, setVolunteers] = useState([]);
+const [incidents, setIncidents] = useState([]);
+const [loadingStats, setLoadingStats] = useState(true);
   const openDetails = (type) => {
     setModalType(type);
     setOpenModal(true);
   };
+  useEffect(() => {
+  if (!token) return;
+
+  const fetchStats = async () => {
+    try {
+      setLoadingStats(true);
+
+      const [incidentsRes, volunteersRes] = await Promise.all([
+        fetch("http://localhost:3333/incidents", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }),
+        fetch("http://localhost:3333/auth/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }),
+      ]);
+
+      const [incidentsData, volunteersData] = await Promise.all([
+        incidentsRes.json(),
+        volunteersRes.json(),
+      ]);
+
+      setIncidents(incidentsData);
+      setVolunteers(volunteersData);
+    } catch (err) {
+      console.error("Stats fetch failed", err);
+      setIncidents([]);
+      setVolunteers([]);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  fetchStats();
+}, [token]);
 
   return (
     <div className="space-y-6">
@@ -27,9 +71,9 @@ export default function StatsPanel() {
           <p className="text-sm text-blue-600 font-bold">
             Total Volunteers
           </p>
-          <p className="text-xl text-blue-500 font-bold mt-2">
-            128
-          </p>
+                <p className="text-xl text-blue-500 font-bold mt-2">
+          {loadingStats ? "..." : volunteers.length}
+        </p>
           <p
             onClick={() => openDetails("volunteers")}
             className="absolute bottom-4 right-5 text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition"
@@ -58,8 +102,8 @@ export default function StatsPanel() {
           <p className="text-sm text-blue-600 font-bold">
             Active Incidents
           </p>
-          <p className="text-xl text-blue-500 font-bold mt-2">
-            20
+                  <p className="text-xl text-blue-500 font-bold mt-2">
+            {loadingStats? "..." : incidents.length}
           </p>
           <p 
           onClick={() => openDetails("incidents")}
@@ -98,9 +142,19 @@ export default function StatsPanel() {
     }
     onClose={() => setOpenModal(false)}
   >
-    {modalType === "volunteers" && <TotalVolunteerTable />}
+   {modalType === "volunteers" && (
+  <TotalVolunteerTable
+    volunteers={volunteers}
+    loading={loadingVolunteers}
+  />
+)}
     {modalType === "requests" && <PendingRequestsTable />}
-    {modalType === "incidents" && <ActiveIncidentsTable />}
+    {modalType === "incidents" && (
+  <ActiveIncidentsTable
+    incidents={incidents}
+    loading={loadingIncidents}
+  />
+)}
     {modalType === "assigned" && <AssignedVolunteersTable />}
 
 
