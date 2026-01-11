@@ -3,7 +3,7 @@ export default function ProfileStrip({
     name = "-",
     verified = false,
     tier = "-",
-    availability= "unavailable",
+    status = "unavailable",
 }) {
     return (
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -14,13 +14,13 @@ export default function ProfileStrip({
                 </div>
 
                 <span
-                    className= {`px-3 py-1 text-xs font-semibold rounded-full
+                    className={`px-3 py-1 text-xs font-semibold rounded-full
                     ${verified
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
                 >
-                    {verified ? "Verifiled": "Unverified"}
+                    {verified ? "Verified" : "Unverified"}
                 </span>
 
                 <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
@@ -31,15 +31,15 @@ export default function ProfileStrip({
             <div>
                 <span
                     className={`px-4 py-1.5 text-xs font-semibold rounded-full
-                    ${availability === "Available"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-gray-200 text-gray-600"
-                    }`}
-                    >
-                        {availability}
-                    </span>
+                    ${status === "Available"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                >
+                    {status}
+                </span>
             </div>
         </div>
     );
-    
+
 }
