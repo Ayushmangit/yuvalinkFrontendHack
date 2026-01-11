@@ -72,7 +72,7 @@ const [loadingStats, setLoadingStats] = useState(true);
             Total Volunteers
           </p>
                 <p className="text-xl text-blue-500 font-bold mt-2">
-          {loadingStats ? "..." : volunteers.length}
+          {loadingStats ?"..." : volunteers.length}
         </p>
           <p
             onClick={() => openDetails("volunteers")}
@@ -103,7 +103,7 @@ const [loadingStats, setLoadingStats] = useState(true);
             Active Incidents
           </p>
                   <p className="text-xl text-blue-500 font-bold mt-2">
-            {loadingStats? "..." : incidents.length}
+            {loadingStats ?"..." : incidents.length}
           </p>
           <p 
           onClick={() => openDetails("incidents")}
@@ -145,14 +145,14 @@ const [loadingStats, setLoadingStats] = useState(true);
    {modalType === "volunteers" && (
   <TotalVolunteerTable
     volunteers={volunteers}
-    loading={loadingVolunteers}
+    loading={loadingStats}
   />
 )}
     {modalType === "requests" && <PendingRequestsTable />}
     {modalType === "incidents" && (
   <ActiveIncidentsTable
     incidents={incidents}
-    loading={loadingIncidents}
+    loading={loadingStats}
   />
 )}
     {modalType === "assigned" && <AssignedVolunteersTable />}

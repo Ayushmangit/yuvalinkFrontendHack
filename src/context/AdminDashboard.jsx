@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react"
-import SideBar from "../components/SideBar";
+import { useAuth } from "../context/AuthContext";
+import DetailsModal from "../components/DetailsModal";
 import StatsPanel from "../components/StatsPanel";
+import SideBar from "../components/SideBar";
 import Chat from "../components/Chat";
 import User from "../components/User";
 import NewsFeed from "../components/NewsFeed";
 import SettingAdmin from "../components/SettingAdmin";
 export default function AdminDashboard() {
+     const { token } = useAuth();
     const images = [
         "/d1.jpg", "/d3.jpg", "/d4.jpg", "/d5.jpg", "/d6.jpg"
     ];
@@ -17,6 +20,9 @@ export default function AdminDashboard() {
     const [showAllFeed, setShowAllFeed] = useState(false);
     const [chatOpen, setChatOpen] = useState(false);
     const [allNews, setAllNews] = useState([]);
+    const [showDetails, setShowDetails] = useState(false);
+const [selectedIncident, setSelectedIncident] = useState(null);
+const [city, setCity] = useState("");
 
     // const cardRefs = useRef([]);
     const next = () => {
@@ -35,6 +41,53 @@ export default function AdminDashboard() {
             return newIndex;
         });
     };
+    const handleActivateClick = (item) => {
+  setSelectedIncident(item);
+  setShowDetails(true);
+};
+const handleActivateIncident = async () => {
+  if (!token) {
+    alert("Not authenticated");
+    return;
+  }
+
+  if (!city.trim()) {
+    alert("City is required");
+    return;
+  }
+
+  const payload = {
+    name: selectedIncident.title,
+    description: selectedIncident.description,
+    city: city.trim(),
+  };
+
+  try {
+    const res = await fetch("http://localhost:3333/incidents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Activation failed");
+      return;
+    }
+
+    alert("Incident Activated ✅");
+    setShowDetails(false);
+    setCity("");
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
+
     // useEffect(() => {
     //     const observer = new IntersectionObserver(
     //         (entries )=> {
@@ -102,6 +155,7 @@ export default function AdminDashboard() {
                             console.log("DATA RECEIVED IN DASHBOARD:", data);
                             setAllNews(data)
                         }}
+                         onActivate={handleActivateClick} 
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -156,50 +210,116 @@ export default function AdminDashboard() {
                 isOpen={settingsOpen}
                 onClose={() => setSettingsOpen(false)}
             />
-            {showAllFeed && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] flex items-center justify-center">
-                    <div className="w-[78%] max-w-[1000px] bg-white rounded-3xl p-8 flex flex-col max-h-[105vh]">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">Live Disaster Feeds</h2>
-                            <button className="text-2xl text-gray-500 hover:text-black" onClick={() => setShowAllFeed(false)}><i className="bi bi-x fs-3"></i></button>
-                        </div>
-                        <div className="overflow-y-auto pr-2">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {allNews.map((item, i) => (
-                                    <div key={i}
-                                        className="bg-white rounded-2xl border border-black
-                       p-3 shadow-md hover:-translate-y-1
-                       transition cursor-pointer">
-                                        <h4 className="font-bold text-lg mb-2">{item.title}</h4>
-                                        <p className="text-gray-600 mb-3 line-clamp-4">{item.description || "No desription available"}</p>
-                                        <a
-                                            href={item.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-blue-600 text-sm mb-2 hover:underline"
-                                        >
-                                            More info →
-                                        </a>
-                                        <span className="text-sm text-gray-500">{item.source?.name}.{" "}{new Date(item.publishedAt).toLocaleTimeString()}</span>
-                                        <div className="mt-auto flex justify-center pt-6">
-                                            <button
-                                                className="px-6 py-2 rounded-full
-                                            bg-gradient-to-r
-                                            from-blue-600 to-green-700
-                                            text-white text-sm
-                                            hover:scale-105 transition"
-                                            >
-                                                Activate
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+           {showDetails && selectedIncident && (
+  <DetailsModal
+    title="Activate Incident"
+    onClose={() => {
+      setShowDetails(false);
+      setCity("");
+    }}
+  >
+    <div className="space-y-4 text-sm">
+      <div>
+        <span className="font-semibold">Title:</span>
+        <p>{selectedIncident.title}</p>
+      </div>
 
-                        </div>
-                    </div>
-                </div>
-            )}
+      <div>
+        <span className="font-semibold">Description:</span>
+        <p>{selectedIncident.description || "N/A"}</p>
+      </div>
+
+      <div>
+        <span className="font-semibold">Source:</span>
+        <p>{selectedIncident.source?.name}</p>
+      </div>
+
+      <div>
+        <span className="font-semibold">Published:</span>
+        <p>{new Date(selectedIncident.publishedAt).toLocaleString()}</p>
+      </div>
+
+      <div className="mt-6">
+        <label className="block font-semibold mb-1">Enter City</label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="e.g. Guwahati"
+          className="w-full border rounded px-3 py-2"
+        />
+      </div>
+
+      <div className="flex justify-end mt-6">
+        <button
+          onClick={handleActivateIncident}
+          className="px-6 py-2 rounded
+                     bg-gradient-to-r from-blue-600 to-green-700
+                     text-white"
+        >
+          Activate Incident
+        </button>
+      </div>
+    </div>
+  </DetailsModal>
+)}
+
+            {showAllFeed && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] flex items-center justify-center">
+    <div className="w-[78%] max-w-[1000px] bg-white rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
+
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Live Disaster Feeds</h2>
+        <button
+          className="text-2xl text-gray-500 hover:text-black"
+          onClick={() => setShowAllFeed(false)}
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {allNews.map((item, i) => (
+          <div
+            key={i}
+            className="bg-white rounded-2xl border border-black
+                       p-3 shadow-md hover:-translate-y-1 transition"
+          >
+            <h4 className="font-bold text-lg mb-2">
+              {item.title}
+            </h4>
+
+            <p className="text-gray-600 mb-3 line-clamp-4">
+              {item.description || "No description available"}
+            </p>
+
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 text-sm hover:underline"
+            >
+              More info →
+            </a>
+
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => handleActivateClick(item)}
+                className="px-6 py-2 rounded-full
+                           bg-gradient-to-r from-blue-600 to-green-700
+                           text-white text-sm hover:scale-105 transition"
+              >
+                Activate
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+)}
+
 
         </>
 
