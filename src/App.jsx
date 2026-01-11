@@ -18,27 +18,28 @@ import VerificationPending from "./components/onboarding/VerificationPending";
 
 function App() {
   return (
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-          <Route path="/onboarding" element={<OnboardingLayout />}>
-            <Route index element={<StepBasicInfo />} />
-            <Route path="experience" element={<StepExperience />} />
-            <Route path="verify" element={<StepVerification />} />
-            <Route path="pending" element={<VerificationPending />} />
-          </Route>
+        <Route path="/onboarding" element={<OnboardingLayout />}>
+          <Route index element={<StepBasicInfo />} />
+          <Route path="experience" element={<StepExperience />} />
+          <Route path="verify" element={<StepVerification />} />
+          <Route path="pending" element={<VerificationPending />} />
+        </Route>
 
-          <Route path="/volunteer" element={<VolunteerDashboard/>}/>
-          <Route path="/admin" element={<AdminDashboard/>}/>
+        <Route path="/volunteer" element={<VolunteerDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
 
-          {/* Single dashboard route */}
-          <Route path="/dashboard" element={<ProtectedRoute />} />
-          
-        </Routes>
-      </AuthProvider>
+        {/* Single dashboard route */}
+        <Route path="/dashboard" element={<ProtectedRoute />} />
+
+      </Routes>
+    </AuthProvider>
+  );
 }
 
 export default App;
