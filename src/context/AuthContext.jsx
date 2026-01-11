@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
         const res = await meRequest(token)
         if (!res.ok) throw new Error("Not authenticated");
         const data = await res.json();
-        console.log("data from Me:", data.user)
         setUser(data.user);
         setToken(token);
       } catch (err) {
@@ -39,9 +38,8 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     loadUser();
-  }, []);
+  }, [token]);
 
   const login = async (email, password) => {
     const data = await loginRequest(email, password);
@@ -57,12 +55,6 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  /**
-   * [TODO:description]
-   *
-   * @async
-   * @returns {Promise<[TODO:type]>} [TODO:description]
-   */
   const logout = async () => {
     try {
       if (token) {
