@@ -59,7 +59,7 @@ export default function DashboardCards ({
                 </h2>
 
                 <p className="text-sm text-gray-500 mt-1">
-                    {status === "Available" ? "Accepting tasks" : "Not accepting tasks"}
+                    {status === "active" ? "Accepting tasks" : "Not Accepting tasks"}
                 </p>
             </div>
         </div>
