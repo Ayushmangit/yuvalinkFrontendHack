@@ -27,11 +27,12 @@ export const AuthProvider = ({ children }) => {
         const res = await meRequest(token)
         if (!res.ok) throw new Error("Not authenticated");
         const data = await res.json();
+        console.log("data from Me:", data.user)
         setUser(data.user);
-        setToken(token); // persist token in context
+        setToken(token);
       } catch (err) {
         console.error(err);
-        localStorage.removeItem("token"); // invalid token
+        localStorage.removeItem("token");
         setUser(null);
         setToken(null);
       } finally {
@@ -63,7 +64,6 @@ export const AuthProvider = ({ children }) => {
    * @returns {Promise<[TODO:type]>} [TODO:description]
    */
   const logout = async () => {
-    console.log("logout called")
     try {
       if (token) {
         await logoutRequest(token);
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Logout failed:", err);
     } finally {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       setUser(null);
       setToken(null);
     }

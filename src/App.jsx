@@ -36,10 +36,9 @@ function App() {
 
         {/* Single dashboard route */}
         <Route path="/dashboard" element={<ProtectedRoute />} />
-
       </Routes>
     </AuthProvider>
-  );
+  )
 }
 
 export default App;

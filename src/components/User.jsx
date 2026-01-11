@@ -1,12 +1,5 @@
 import { useAuth } from "../context/AuthContext";
 import LogoutButton from "./LogoutButton";
-/**
- *
- * @param {[TODO:type]} [TODO:name] - [TODO:description]
- * @param {[TODO:type]} [TODO:name].isOpen - [TODO:description]
- * @param {[TODO:type]} [TODO:name].onClose - [TODO:description]
- * @returns {[TODO:type]} [TODO:description]
- */
 export default function User({ isOpen, onClose }) {
 
   const { user } = useAuth()
