@@ -12,24 +12,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
 
     try {
       const data = await login(email, password);
+
       if (!data || !data.token) {
         setError("Invalid credentials");
         return;
       }
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       if (data.user.role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/volunteer"); // volunteer dashboard
+        navigate("/volunteer");
       }
-
     } catch (err) {
       console.error("LOGIN ERROR:", err);
       setError("Invalid credentials");
@@ -103,8 +103,17 @@ const Login = () => {
         >
           Sign In
         </button>
+        <p className="text-sm text-center text-gray-300">
+          Don’t have an account?{" "}
+          <span
+            onClick={() => navigate("/register")}
+            className="text-blue-400 cursor-pointer hover:underline font-semibold"
+          >
+            Register
+          </span>
+        </p>
 
-        <p className="text-xs text-center text-gray-300">
+        <p className="text-xs text-center text-gray-400">
           Secure access for volunteers & administrators
         </p>
       </form>
