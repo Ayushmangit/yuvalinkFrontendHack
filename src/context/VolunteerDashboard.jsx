@@ -1,38 +1,20 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import VolunteerSideBar from "../components/VolunteerSideBar";
 import DetailsModal from "../components/DetailsModal";
-
 import ProfileStrip from "../components/ProfileStrip";
 import DashboardCards from "../components/DashboardCards";
 import TasksSection from "../components/TasksSection";
 import TeamDetails from "../components/TeamDetails";
 import ActivityHistory from "../components/ActivityHistory";
+import { useAuth } from "./AuthContext";
 
 export default function VolunteerDashboard() {
+  const { user } = useAuth();
 
-  const [isVerified] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  };
-
-  if (!isVerified) {
-    return <VerificationPending />;
-  }
-
-  const [volunteer] = useState({
-    role: "Volunteer",
-    name: "Rajesh Kumar",
-    verified: true,
-    tier: "Tier-2",
-    availability: "Available",
-  });
-
+  const [volunteer, setVolunteer] = useState(null);
   const [dashboardStats] = useState({
     verified: true,
     activeTasks: 0,
@@ -45,74 +27,61 @@ export default function VolunteerDashboard() {
     category: "Medical & Logistics Support",
     role: "Field Coordinator",
     leaderName: "Captain Anil Verma",
-    leaderContact: "+91-98765-43210"
+    leaderContact: "+91-98765-43210",
   });
 
   const [activityHistory] = useState([
-  {
-    date: "2025-12-20",
-    incident: "Flood Relief - Kerala",
-    task: "Medical Aid Distribution",
-    status: "Completed",
-    feedback: "Submitted",
-  },
-  {
-    date: "2025-12-15",
-    incident: "Fire Response - Mumbai",
-    task: "Evacuation Support",
-    status: "Completed",
-    feedback: "Pending",
-  },
-  {
-    date: "2025-12-12",
-    incident: "Cyclone Relief - Odisha",
-    task: "Food Packet Distribution",
-    status: "Completed",
-    feedback: "Submitted",
-  },
-  {
-    date: "2025-12-09",
-    incident: "Landslide Response - Himachal",
-    task: "Rescue & First Aid",
-    status: "Completed",
-    feedback: "Reviewed",
-  },
-  {
-    date: "2025-12-05",
-    incident: "Heatwave Assistance - Rajasthan",
-    task: "Water Supply Management",
-    status: "Completed",
-    feedback: "Submitted",
-  },
-  {
-    date: "2025-11-30",
-    incident: "Earthquake Response - Nepal Border",
-    task: "Temporary Shelter Setup",
-    status: "Completed",
-    feedback: "Approved",
-  },
-]);
+    {
+      date: "2025-12-20",
+      incident: "Flood Relief - Kerala",
+      task: "Medical Aid Distribution",
+      status: "Completed",
+      feedback: "Submitted",
+    },
+    {
+      date: "2025-12-15",
+      incident: "Fire Response - Mumbai",
+      task: "Evacuation Support",
+      status: "Completed",
+      feedback: "Pending",
+    },
+  ]);
 
+  useEffect(() => {
+    if (user) {
+      setVolunteer({
+        role: user.role ?? "Volunteer",
+        name: user.fullName,
+        verified: user.verification,
+        tier: user.tier ?? "Tier-2",
+        status: user.status ?? "Inactive",
+      });
+    }
+  }, [user]);
 
-  const images = ["/d1.jpg","/d3.jpg","/d4.jpg","/d5.jpg","/d6.jpg"];
+  const images = ["/d1.jpg", "/d3.jpg", "/d4.jpg", "/d5.jpg", "/d6.jpg"];
   const [index, setIndex] = useState(0);
   const [activeBg, setActiveBg] = useState(images[0]);
 
   const next = () => {
-    setIndex(prev => {
-      const newIndex = (prev + 1) % images.length;
-      setActiveBg(images[newIndex]);
-      return newIndex;
-    });
+    const newIndex = (index + 1) % images.length;
+    setIndex(newIndex);
+    setActiveBg(images[newIndex]);
   };
 
   const prev = () => {
-    setIndex(prev => {
-      const newIndex = prev === 0 ? images.length - 1 : prev - 1;
-      setActiveBg(images[newIndex]);
-      return newIndex;
-    });
+    const newIndex = index === 0 ? images.length - 1 : index - 1;
+    setIndex(newIndex);
+    setActiveBg(images[newIndex]);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
+
+  if (!volunteer) return null;
 
   return (
     <>
@@ -124,20 +93,20 @@ export default function VolunteerDashboard() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-black/20"></div>
 
         <button
-          className="fixed top-2 left-2 z-[60] w-[50px] h-[44px] flex items-center justify-center bg-[#1F3347] rounded-xl backdrop-blur-md"
+          className="fixed top-2 left-2 z-[60] w-[50px] h-[44px] flex items-center justify-center bg-[#1F3347] rounded-xl"
           onClick={() => setSidebarOpen(true)}
         >
           <i className="bi bi-list fs-1 text-white"></i>
         </button>
 
         <div className="absolute top-5 left-1/2 -translate-x-1/2 z-10">
-          <div className="bg-[#1F3347]/90 backdrop-blur-md px-12 py-6 rounded-2xl">
+          <div className="bg-[#1F3347]/90 px-12 py-6 rounded-2xl">
             <h1 className="text-4xl font-bold text-white">Yuvalink</h1>
           </div>
         </div>
       </div>
 
-      {/* MAIN DASHBOARD (UNCHANGED) */}
+      {/* DASHBOARD */}
       <div className="relative bg-[#1F3347] pt-35 pb-32">
         <div className="relative mx-auto -mt-[85vh] w-[72%] bg-white rounded-2xl shadow-2xl p-6">
 
@@ -158,7 +127,6 @@ export default function VolunteerDashboard() {
             <ProfileStrip {...volunteer} />
             <DashboardCards {...dashboardStats} />
 
-            {/* PAGE CONTENT SAME AS BEFORE */}
             <div id="tasks"><TasksSection /></div>
             <div id="team"><TeamDetails {...teamDetails} /></div>
             <div id="history"><ActivityHistory activities={activityHistory} /></div>
@@ -166,75 +134,24 @@ export default function VolunteerDashboard() {
         </div>
       </div>
 
-      {/* POPUP (SIDEBAR CLICK) */}
-      {["tasks","team","history"].includes(activeModal) && (
-        <DetailsModal
-          title=""
-          onClose={() => setActiveModal(null)}
-        >
-          {activeModal === "tasks" && (
-            <div className="px-6 [&_*]:text-base md:[&_*]:text-lg">
-              <TasksSection />
-            </div>
-          )}
-          {activeModal === "team" && (
-            <div className="px-6 [&_*]:text-base md:[&_*]:text-lg">
-              <TeamDetails {...teamDetails} />
-            </div>
-          )}
-          {activeModal === "history" && (
-            <div className="px-6 [&_*]:text-base md:[&_*]:text-lg">
-              <ActivityHistory activities={activityHistory} />
-            </div>
-          )}
+      {/* MODAL */}
+      {["tasks", "team", "history"].includes(activeModal) && (
+        <DetailsModal title="" onClose={() => setActiveModal(null)}>
+          {activeModal === "tasks" && <TasksSection />}
+          {activeModal === "team" && <TeamDetails {...teamDetails} />}
+          {activeModal === "history" && <ActivityHistory activities={activityHistory} />}
         </DetailsModal>
       )}
 
-      {/* SINGLE SIDEBAR (NO SCROLL) */}
       <VolunteerSideBar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onNavigate={(section) => {
           setSidebarOpen(false);
-
-          if (section === "logout") {
-            handleLogout();
-            return;
-          }
-
-          if (section === "top") {
-            setActiveModal(null);   // home = no popup
-            return;
-          }
-
-          setActiveModal(section);
+          if (section === "logout") handleLogout();
+          else setActiveModal(section);
         }}
       />
-    <section className="bg-[#1F3347] py-20 px-[12%] text-center">
-        <h2 className="text-white font-bold mb-4 text-[#2b5c8a]">
-            About YuvaLink
-        </h2>
-        <p className="text-lg leading-relaxed text-white max-w-5xl mx-auto">
-            Yuvalink is a comprehensive volunteer management platform dedicated
-            to connecting passionate individuals with meaningful disaster relief
-            and community service opportunities across India. We believe in the
-            power of collective action and coordinate volunteers with the skills
-            needed to make real impact during critical times.
-        </p>
-    </section>
-
-    <footer className="bg-[#183a55] py-10 text-center">
-        <div className="flex justify-center gap-10 text-white text-base mb-5">
-            <span className="cursor-pointer hover:underline">Privacy Policy</span>
-            <span className="cursor-pointer hover:underline">Terms of Service</span>
-            <span className="cursor-pointer hover:underline">Contact Us</span>
-            <span className="cursor-pointer hover:underline">Partner Sites</span>
-        </div>
-        <p className="text-white/70 text-sm">
-            2025 YuvaLink. All rights reserved.
-        </p>
-    </footer>
-
     </>
   );
 }
