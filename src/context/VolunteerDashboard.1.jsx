@@ -12,7 +12,8 @@ export default function VolunteerDashboard() {
     const { user, token } = useAuth();
     const [volunteer, setVolunteer] = useState(null);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logout(); 
         localStorage.removeItem("token");
         window.location.href = "/login";
     };
