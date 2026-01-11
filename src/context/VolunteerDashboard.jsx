@@ -177,12 +177,12 @@ export default function VolunteerDashboard() {
                     </div>
 
                     <div className="space-y-8 mt-6">
-                        <ProfileStrip {...volunteer} />
+                       {/* <ProfileStrip {...volunteer} /> */}
                         <DashboardCards
-                            verified={dashboardStats.verified}
-                            activeTasks={dashboardStats.activeTasks}
-                            tier={dashboardStats.tier}
-                            status={dashboardStats.status} />
+                            verified={user.verified}
+                            activeTasks={user.activeTasks}
+                            tier={user.tier}
+                            status={user.status} />
                         <div id="tasks"><TasksSection /></div>
                         <div id="team"><TeamDetails {...teamDetails} /></div>
                         <div id="history"><ActivityHistory activities={activityHistory} /></div>

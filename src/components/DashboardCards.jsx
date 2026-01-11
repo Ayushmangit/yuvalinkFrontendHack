@@ -7,7 +7,7 @@ export default function DashboardCards ({
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-green-50 to-white border">
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-green-100 to-white border">
                 <p className="text-sm uppercase tracking-wide text-gray-500">
                     Verification
                 </p>
@@ -21,7 +21,7 @@ export default function DashboardCards ({
                 />
             </div>
 
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-white border">
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-blue-100 to-white border">
                 <p className="text-sm uppercase tracking-wide text-gray-500">
                     Active Tasks
                 </p>
@@ -34,7 +34,7 @@ export default function DashboardCards ({
                 </p>
             </div>
 
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-white border">
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-emerald-100 to-white border">
                 <p className="text-sm uppercase tracking-wide text-gray-500">
                     Volunteer Tier
                 </p>
@@ -47,7 +47,7 @@ export default function DashboardCards ({
                 </p>
             </div>
 
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-gray-100 to-white border">
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-gray-200 to-white border">
                 <p className="text-sm uppercase tracking-wide text-gray-500">
                     Availability
                 </p>
