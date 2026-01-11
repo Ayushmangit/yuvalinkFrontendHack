@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
+import DetailsModal from "./DetailsModal";
 
-export default function NewsFeed({ onViewAll,onDataLoaded }) {
+export default function NewsFeed({ onViewAll, onDataLoaded }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState(null);
+  const [city, setCity] = useState("");
+
+  // ================= FETCH NEWS =================
   useEffect(() => {
     fetch(
       "https://newsapi.org/v2/everything?q=(India OR Assam OR Uttarakhand OR Bihar OR Kerala OR Odisha) AND (earthquake OR flood OR cyclone OR landslide)&language=en&sortBy=publishedAt&apiKey=60b5954d65694e3182b0aeffa60036e6"
@@ -12,9 +18,8 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
       .then((data) => {
         const articles = data.articles || [];
         setNews(articles);
-        onDataLoaded && onDataLoaded(articles); // 👈 YAHAN MAGIC
+        onDataLoaded && onDataLoaded(articles);
         setLoading(false);
-            
       })
       .catch((err) => {
         console.error("News API error:", err);
@@ -22,6 +27,56 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
       });
   }, []);
 
+  // ================= ACTIVATE INCIDENT =================
+  const handleActivate = async (item) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Not authenticated. Please login again.");
+      return;
+    }
+
+    if (!city || city.trim() === "") {
+      alert("City is required!");
+      return;
+    }
+
+    const payload = {
+      name: item.title,
+      description: item.description,
+      city: city.trim(),
+    };
+
+    console.log("PAYLOAD SENDING 👉", payload);
+
+    try {
+      const res = await fetch("http://localhost:3333/incidents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log("BACKEND RESPONSE 👉", data);
+
+      if (!res.ok) {
+        alert(data.message || "Activation failed");
+        return;
+      }
+
+      setShowModal(false);
+      setCity("");
+      alert("Incident Activated ✅");
+    } catch (err) {
+      console.error("ERROR 👉", err);
+      alert("Server error");
+    }
+  };
+
+  // ================= LOADING =================
   if (loading) {
     return (
       <p className="text-center text-gray-500 py-6">
@@ -30,6 +85,7 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
     );
   }
 
+  // ================= JSX =================
   return (
     <div className="w-full">
       {/* HEADER */}
@@ -57,7 +113,7 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
                        bg-white rounded-2xl
                        border border-black
                        p-2 shadow-md
-                      "
+                       flex flex-col"
           >
             <h4 className="font-bold text-base mb-3 line-clamp-3">
               {item.title}
@@ -66,18 +122,19 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
             <p className="text-gray-600 text-sm mb-2 line-clamp-3">
               {item.description || "No description available"}
             </p>
-             {/* 🔗 MORE INFO LINK */}
-  {item.url && (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-blue-600 text-xs font-semibold
-                 hover:underline mb-2 inline-block"
-    >
-      More info →
-    </a>
-  )}
+
+            {item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 text-xs font-semibold
+                           hover:underline mb-2 inline-block"
+              >
+                More info →
+              </a>
+            )}
+
             <span className="text-xs text-gray-500 mb-4">
               {item.source?.name} •{" "}
               {new Date(item.publishedAt).toLocaleTimeString()}
@@ -85,11 +142,14 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
 
             <div className="mt-auto flex justify-center">
               <button
+                onClick={() => {
+                  setSelectedIncident(item);
+                  setShowModal(true);
+                }}
                 className="px-4 py-2 rounded-full
                            bg-gradient-to-r
                            from-blue-600 to-green-700
-                           text-white text-sm
-                           hover:translate-x-1 transition"
+                           text-white text-sm"
               >
                 Activate
               </button>
@@ -97,6 +157,67 @@ export default function NewsFeed({ onViewAll,onDataLoaded }) {
           </div>
         ))}
       </div>
+
+      {/* ================= MODAL ================= */}
+      {showModal && selectedIncident && (
+        <DetailsModal
+          title="Activate Incident"
+          onClose={() => {
+            setShowModal(false);
+            setCity("");
+          }}
+        >
+          <div className="space-y-4 text-sm">
+            <div>
+              <span className="font-semibold">Title:</span>
+              <p>{selectedIncident.title}</p>
+            </div>
+
+            <div>
+              <span className="font-semibold">Description:</span>
+              <p>{selectedIncident.description || "N/A"}</p>
+            </div>
+
+            <div>
+              <span className="font-semibold">Source:</span>
+              <p>{selectedIncident.source?.name}</p>
+            </div>
+
+            <div>
+              <span className="font-semibold">Published:</span>
+              <p>
+                {new Date(
+                  selectedIncident.publishedAt
+                ).toLocaleString()}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <label className="block font-semibold mb-1">
+                Enter City
+              </label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Guwahati"
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => handleActivate(selectedIncident)}
+                className="px-6 py-2 rounded
+                           bg-gradient-to-r from-blue-600 to-green-700
+                           text-white"
+              >
+                Activate Incident
+              </button>
+            </div>
+          </div>
+        </DetailsModal>
+      )}
     </div>
   );
 }
