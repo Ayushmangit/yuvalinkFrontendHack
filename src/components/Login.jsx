@@ -13,7 +13,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError(""); // 🔥 IMPORTANT: purana error clear karo
+    setError("");
 
     try {
       const data = await login(email, password);
@@ -21,7 +21,6 @@ const Login = () => {
         setError("Invalid credentials");
         return;
       }
-
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -46,7 +45,6 @@ const Login = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* overlay */}
       <div className="absolute inset-0 bg-[#0F1F2E]/80 backdrop-blur-sm"></div>
 
       <form
@@ -56,7 +54,6 @@ const Login = () => {
                    bg-white/10 backdrop-blur-xl
                    p-8 shadow-2xl text-white"
       >
-        {/* Header */}
         <div className="text-center">
           <h2 className="text-3xl font-extrabold">Volunteer Login</h2>
           <p className="mt-2 text-sm text-gray-300">
@@ -64,14 +61,12 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Error */}
         {error && (
           <div className="rounded-lg bg-red-500/20 px-4 py-2 text-sm text-red-200">
             {error}
           </div>
         )}
 
-        {/* Email */}
         <div>
           <label className="block text-sm mb-1 text-gray-200">Email</label>
           <input
@@ -86,7 +81,6 @@ const Login = () => {
           />
         </div>
 
-        {/* Password */}
         <div>
           <label className="block text-sm mb-1 text-gray-200">Password</label>
           <input
@@ -101,7 +95,6 @@ const Login = () => {
           />
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full rounded-xl bg-blue-600 py-3
@@ -111,7 +104,6 @@ const Login = () => {
           Sign In
         </button>
 
-        {/* Footer */}
         <p className="text-xs text-center text-gray-300">
           Secure access for volunteers & administrators
         </p>
